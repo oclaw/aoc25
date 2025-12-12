@@ -79,7 +79,7 @@ impl day::Day for Day {
                 return;
             }
 
-            let mut crossed_zero: bool = false;
+            let crossed_zero: bool;
             if sign > 0 {
                 crossed_zero = pos < prev_pos;
             } else {
