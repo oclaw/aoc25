@@ -135,6 +135,12 @@ impl day::Day for Day {
         }
         vectors.sort_by(|a, b| a.dist.partial_cmp(&b.dist).unwrap());
 
+        // Optimization: we need at least vertexes.len() - 1 edges to connect all points so we can build that many first before checking connectivity
+        // this will reduce number of iterations in the main loop
+        //
+        // This approach might actually be significantly improved with "binary search" of amount of edges since we precisely know order of edges appearance by distance
+        // E.g. we can try to build graph with vertexes.len()^2 and keep reducing number of edges until graph becomes disconnected.
+        // After we can do some refinements around that point and figure out exact number of edges needed much faster  
         let min_edges_needed = vertexes.len() - 1;
         for vector in vectors.iter().take(min_edges_needed) {
             graph[vector.a][vector.b] = true;
