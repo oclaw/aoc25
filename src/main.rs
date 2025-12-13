@@ -6,6 +6,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 use std::env;
 
@@ -19,6 +20,7 @@ fn main() {
         Box::new(day5::solution::Day {}),
         Box::new(day6::solution::Day {}),
         Box::new(day7::solution::Day {}),
+        Box::new(day8::solution::Day {}),
     ];
 
     let args: Vec<String> = env::args().into_iter().skip(1).collect();
@@ -34,7 +36,6 @@ fn main() {
 
                     solve(day.as_ref(), format!("tasks/day{}", day_num).as_str(), EXAMPLE_TYPE).expect("failed to solve example");
                     solve(day.as_ref(), format!("tasks/day{}", day_num).as_str(), TASK_TYPE).expect("failed to solve task");
-
                 }
                 _ => {
                     println!("Invalid day number");
