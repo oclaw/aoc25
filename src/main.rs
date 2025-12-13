@@ -2,6 +2,7 @@ mod day;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 use std::env;
 
@@ -11,6 +12,7 @@ fn main() {
         Box::new(day1::solution::Day {}),
         Box::new(day2::solution::Day {}),
         Box::new(day3::solution::Day {}),
+        Box::new(day4::solution::Day {}),
     ];
 
     let args: Vec<String> = env::args().into_iter().skip(1).collect();
