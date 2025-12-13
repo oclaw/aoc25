@@ -13,6 +13,13 @@ struct Point3D {
     z: i32,
 }
 
+struct Vector3D {
+    a: usize, // index of point a
+    b: usize, // index of point b
+    dist: f64,
+}
+
+
 fn distance(a: &Point3D, b: &Point3D) -> f64 {
     let dx = (a.x - b.x) as f64;
     let dy = (a.y - b.y) as f64;
@@ -21,27 +28,28 @@ fn distance(a: &Point3D, b: &Point3D) -> f64 {
 }
 
 fn solve_part1(vertexes: &Vec<Point3D>, max_edges: i32) -> Result<String, Box<dyn std::error::Error>> {
+
     // adjacency matrix
     let mut graph = vec![vec![false; vertexes.len()]; vertexes.len()];
 
-    // put edges between closest points max_edges times
-    for _ in 0..max_edges {
-        let mut min_distance = std::f64::MAX;
-        let mut point_a = 0;
-        let mut point_b = 0;
-        for i in 0..vertexes.len() {
-            for j in (i+1)..vertexes.len() {
-                if graph[i][j] {
-                    continue;
-                }
-                let dist = distance(&vertexes[i], &vertexes[j]);
-                if dist < min_distance {
-                    min_distance = dist;
-                    point_a = i;
-                    point_b = j;
-                }
-            }
+    let mut vectors = Vec::new();
+    for i in 0..vertexes.len() {
+        for j in (i+1)..vertexes.len() {
+            let dist = distance(&vertexes[i], &vertexes[j]);
+            vectors.push( Vector3D {
+                a: i,
+                b: j,
+                dist,
+            });
         }
+    }
+    vectors.sort_by(|a, b| a.dist.partial_cmp(&b.dist).unwrap());
+
+    // put edges between closest points max_edges times
+    for i in 0..max_edges {
+        let point_a = vectors[i as usize].a;
+        let point_b = vectors[i as usize].b;
+
         graph[point_a][point_b] = true;
         graph[point_b][point_a] = true;
     }
@@ -116,12 +124,6 @@ impl day::Day for Day {
         let mut graph = vec![vec![false; vertexes.len()]; vertexes.len()];
 
 
-        struct Vector3D {
-            a: usize,
-            b: usize,
-            dist: f64,
-        }
-
         let mut vectors = Vec::new();
         for i in 0..vertexes.len() {
             for j in (i+1)..vertexes.len() {
@@ -142,9 +144,11 @@ impl day::Day for Day {
         // E.g. we can try to build graph with vertexes.len()^2 and keep reducing number of edges until graph becomes disconnected.
         // After we can do some refinements around that point and figure out exact number of edges needed much faster  
         let min_edges_needed = vertexes.len() - 1;
+        let mut edges_put = 0; 
         for vector in vectors.iter().take(min_edges_needed) {
             graph[vector.a][vector.b] = true;
             graph[vector.b][vector.a] = true;
+            edges_put += 1;
         }
             
 
@@ -160,27 +164,13 @@ impl day::Day for Day {
             }
         }
 
-        // put edges between closest points max_edges times
         let mut last_point_a: Option<Point3D>;
         let mut last_point_b: Option<Point3D>;
-        let mut edges_put = min_edges_needed; 
         loop {
-            let mut min_distance = std::f64::MAX;
-            let mut point_a = 0;
-            let mut point_b = 0;
-            for i in 0..vertexes.len() {
-                for j in (i+1)..vertexes.len() {
-                    if graph[i][j] {
-                        continue;
-                    }
-                    let dist = distance(&vertexes[i], &vertexes[j]);
-                    if dist < min_distance {
-                        min_distance = dist;
-                        point_a = i;
-                        point_b = j;
-                    }
-                }
-            }
+
+            let point_a = vectors[edges_put].a;
+            let point_b = vectors[edges_put].b;
+
             graph[point_a][point_b] = true;
             graph[point_b][point_a] = true;
             edges_put += 1;
