@@ -6,7 +6,7 @@ pub struct Day {
 
 const PAPER_ROLL: char = '@';
 const EMPTY_SPACE: char = '.';
-const REACHABLE_SPACE: char = 'x';
+// const REACHABLE_SPACE: char = 'x';
 
 fn get_adjacent_positions(i: usize, j: usize) -> [(i32, i32); 8] {
     [
